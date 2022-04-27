@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace RPG.InputSystem
 {
+    [Serializable]
     public class AxisKey
     {
         public string name;
@@ -16,7 +18,7 @@ namespace RPG.InputSystem
         //¸º·½Ïò¼ü
         public KeyCode negKeyCode;
 
-        public bool Enable { get; private set; }
+        public bool enable = true;
 
         public void SetKey(KeyCode _posKeyCode,KeyCode _negKeyCode)
         {
@@ -39,7 +41,7 @@ namespace RPG.InputSystem
         /// <param name="_enable"></param>
         public void SetEnable(bool _enable)
         {
-            Enable = _enable;
+            enable = _enable;
         }
     }
 }

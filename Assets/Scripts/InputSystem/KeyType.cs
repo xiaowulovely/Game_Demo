@@ -2,17 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class KeyType : MonoBehaviour
+namespace RPG.InputSystem
 {
-    // Start is called before the first frame update
-    void Start()
+    public enum KeyType
     {
-        
+        Key,
+        ValueKey,
+        AxisPosKey,
+        AxisNegKey,
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }

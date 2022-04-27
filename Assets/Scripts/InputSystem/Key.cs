@@ -16,7 +16,7 @@ namespace RPG.InputSystem
         public float realInterval;
         public KeyCode keyCode;
 
-        public bool Enable { get; private set; }
+        public bool enable = true;
         
         /// <summary>
         /// …Ë÷√∞¥º¸
@@ -32,7 +32,7 @@ namespace RPG.InputSystem
         /// <param name="_enable"></param>
         public void SetEnable(bool _enable)
         {
-            Enable = _enable;
+            enable = _enable;
         }
     }
 }

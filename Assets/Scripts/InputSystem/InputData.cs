@@ -6,6 +6,7 @@ using System;
 
 namespace RPG.InputSystem
 {
+    [Serializable]
     public class InputData
     {
         public List<Key> keys = new List<Key>();
@@ -218,12 +219,11 @@ namespace RPG.InputSystem
             AxisKeyUpdate();
         }
 
-        //
         private void KeyUpdate()
         {
             for(int i=0;i<keys.Count;i++)
             {
-                if(keys[i].Enable)
+                if(keys[i].enable)
                 {
                     keys[i].isDown = false;
                     keys[i].isDoubleDown = false;
@@ -283,7 +283,7 @@ namespace RPG.InputSystem
         {
             for(int i =0;i<valueKeys.Count;i++)
             {
-                if (valueKeys[i].Enable)
+                if (valueKeys[i].enable)
                 {
                     if (Input.GetKey(valueKeys[i].keyCode))
                     {
@@ -301,7 +301,7 @@ namespace RPG.InputSystem
         {
             for (int i = 0; i < axisKeys.Count; i++)
             {
-                if(axisKeys[i].Enable)
+                if(axisKeys[i].enable)
                 {
                     if(Input.GetKey(axisKeys[i].posKeyCode))
                     {
@@ -350,9 +350,10 @@ namespace RPG.InputSystem
                 axisData.name = axisKey.name;
                 axisData.posKeyCode = axisKey.posKeyCode.ToString();
                 axisData.negKeyCode = axisKey.negKeyCode.ToString();
+                inputSettingData.axisKeys.Add(axisData);
             }
             string ISD = JsonUtility.ToJson(inputSettingData);
-
+            //Debug.Log(ISD);
             string filePath = Application.dataPath + _path;
             FileInfo file = new FileInfo(filePath);
             StreamWriter sw = file.CreateText();

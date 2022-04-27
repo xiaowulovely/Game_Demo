@@ -1,9 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace RPG.InputSystem
 {
+    [Serializable]
     public class ValueKey
     {
         public string name;
@@ -12,7 +14,7 @@ namespace RPG.InputSystem
         public float value;
         public float addSpeed;
         public KeyCode keyCode;
-        public bool Enable { get; private set; }
+        public bool enable = true;
 
         public void SetKey(KeyCode _keycode)
         {
@@ -21,7 +23,7 @@ namespace RPG.InputSystem
 
         public void SetEnable(bool _enable)
         {
-            Enable = _enable;
+            enable = _enable;
         }
     }
 }
