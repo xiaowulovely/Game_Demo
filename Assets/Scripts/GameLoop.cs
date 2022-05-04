@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using RPG.InputSystem;
+using RPG.EventSystem;
 
 public class GameLoop : MonoBehaviour
 {
@@ -18,5 +19,6 @@ public class GameLoop : MonoBehaviour
     void Update()
     {
         m_InputManager.Update();
+        GameEventManager.Update();
     }
 }
