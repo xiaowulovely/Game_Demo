@@ -1,8 +1,8 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RPG.InputSystem;
-using RPG.EventSystem;
+using RPG.Framework.InputSystem;
+using RPG.Framework.EventSystem;
 
 public class GameLoop : MonoBehaviour
 {

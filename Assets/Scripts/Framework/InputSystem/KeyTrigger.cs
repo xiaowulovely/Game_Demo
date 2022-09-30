@@ -1,5 +1,5 @@
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     public enum KeyTrigger
     {

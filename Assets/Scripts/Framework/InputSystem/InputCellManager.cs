@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     public class InputCellManager : MonoBehaviour
     {

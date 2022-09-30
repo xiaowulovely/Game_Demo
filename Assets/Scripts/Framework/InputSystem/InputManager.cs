@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     public class InputManager
     {

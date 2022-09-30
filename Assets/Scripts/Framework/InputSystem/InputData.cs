@@ -4,7 +4,7 @@ using UnityEngine;
 using System.IO;
 using System;
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     [Serializable]
     public class InputData

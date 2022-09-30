@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using System;
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     public class InputCell : MonoBehaviour,IPointerClickHandler
     {

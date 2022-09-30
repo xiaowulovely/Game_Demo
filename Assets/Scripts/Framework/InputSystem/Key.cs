@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace RPG.InputSystem
+namespace RPG.Framework.InputSystem
 {
     [Serializable]
     public class Key

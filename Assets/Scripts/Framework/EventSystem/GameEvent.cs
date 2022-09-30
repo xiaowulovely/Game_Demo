@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG.EventSystem
+namespace RPG.Framework.EventSystem
 {
     public class GameEvent : GameBaseEvent
     {
