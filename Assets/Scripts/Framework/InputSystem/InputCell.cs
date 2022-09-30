@@ -13,9 +13,9 @@ namespace RPG.Framework.InputSystem
         public KeyType type;
         private Text keyCodedText;
         private Image keyCodeImage;
-        private Action<KeyCode> setKey;
+        private Func<KeyCode,bool> setKey;
 
-        
+        [SerializeField] private string m_Key;
 
         private void Awake()
         {
@@ -23,13 +23,15 @@ namespace RPG.Framework.InputSystem
             keyCodeImage = transform.Find("KeyBG_Image").GetComponent<Image>();
             keyCodedText = keyCodeImage.GetComponentInChildren<Text>();
         }
+
         public void OnPointerClick(PointerEventData eventData)
         {
             keyCodedText.text = "Press key";
             switch (type)
             {
                 case KeyType.Key:
-                    setKey = key => InputManager.SetKey(keyName,key);
+                    setKey = key => InputManager.SetKey(keyName, key);
+                    
                     break;
                 case KeyType.ValueKey:
                     setKey = key => InputManager.SetValueKey(keyName, key);
@@ -40,15 +42,20 @@ namespace RPG.Framework.InputSystem
                 case KeyType.AxisNegKey:
                     setKey = key => InputManager.SetAxisNegKey(keyName, key);
                     break;
-                default:
-                    break;
             }
-            InputManager.StartSetKey(setKey,SetKeyText);
+            InputManager.StartSetKey(setKey,SetKeyText, RestorKey);
         }
 
         public void SetKeyText(KeyCode _keyCode)
         {
             keyCodedText.text = _keyCode.ToString();
+            m_Key = _keyCode.ToString();
         }
+
+        private void RestorKey()
+        {
+            keyCodedText.text = m_Key;
+        }
+
     }
 }

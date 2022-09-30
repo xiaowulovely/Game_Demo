@@ -6,9 +6,27 @@ using RPG.Framework.EventSystem;
 
 public class GameLoop : MonoBehaviour
 {
-    public InputData InputData = new InputData();
+    #region 单例
+
+    private static GameLoop m_Instance;
+
+    void Awake()
+    {
+        if (m_Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        m_Instance = this;
+        DontDestroyOnLoad(gameObject);
+    }
+    #endregion
+
+    [Header("输入系统")]
+    [SerializeField] private InputData InputData = new InputData();
 
     private InputManager m_InputManager;
+
 
     void Start()
     {

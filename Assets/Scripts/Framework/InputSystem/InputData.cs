@@ -9,9 +9,18 @@ namespace RPG.Framework.InputSystem
     [Serializable]
     public class InputData
     {
-        public List<Key> keys = new List<Key>();
-        public List<ValueKey> valueKeys = new List<ValueKey>();
-        public List<AxisKey> axisKeys = new List<AxisKey>();
+        public const string AxisPos = "Pos";
+        public const string AxisNeg = "Neg";
+
+        [SerializeField] private List<Key> keys = new List<Key>();
+        [SerializeField] private List<ValueKey> valueKeys = new List<ValueKey>();
+        [SerializeField] private List<AxisKey> axisKeys = new List<AxisKey>();
+
+        /// <summary>
+        /// 被使用过的键
+        /// </summary>
+        //private List<KeyCode> m_UsedKeys = new List<KeyCode>();
+        private Dictionary<string, KeyCode> m_UsedKeys = new Dictionary<string, KeyCode>();
 
         /// <summary>
         /// 根据键位名获取键位对象
@@ -40,37 +49,72 @@ namespace RPG.Framework.InputSystem
         {
             return axisKeys.Find(k => k.name == _name);
         }
+
+        /// <summary>
+        /// 检测要设置的按键是否被使用过
+        /// </summary>
+        /// <param name="keyCode"></param>
+        /// <returns></returns>
+        private bool CheckKeyCanBeUse(KeyCode keyCode)
+        {
+            return !m_UsedKeys.ContainsValue(keyCode);
+        }
+
+        private void AddUsedKey(string key,KeyCode keycode)
+        {
+            if (m_UsedKeys.ContainsKey(key))
+            {
+                m_UsedKeys[key] = keycode;
+            }
+            else
+            {
+                m_UsedKeys.Add(key, keycode);
+            }
+        }
+
         /// <summary>
         /// 设置键位对应的键盘按键
         /// </summary>
         /// <param name="_name">键位名</param>
         /// <param name="_keyCode">键盘按键</param>
-        public void SetKey(string _name,KeyCode _keyCode)
+        public bool SetKey(string _name,KeyCode _keyCode)
         {
             Key key = GetKeyObject(_name);
             if(key==null)
             {
                 Debug.LogError("Can not find the key!Please check the name again!");
-                return;
+                return false;
             }
+            if (!CheckKeyCanBeUse(_keyCode))
+            {
+                Debug.Log($"{_keyCode}已被使用");
+                return false;
+            }
+            AddUsedKey(_name, _keyCode);
             key.SetKey(_keyCode);
-
+            return true;
         }
         /// <summary>
         /// 设置数字键位对应的键盘按键
         /// </summary>
         /// <param name="_name">键位名</param>
         /// <param name="_keyCode">家农安按键</param>
-        public void SetValueKey(string _name,KeyCode _keyCode)
+        public bool SetValueKey(string _name,KeyCode _keyCode)
         {
             ValueKey valueKey = GetValueKeyObject(_name);
             if(valueKey==null)
             {
                 Debug.LogError("Can not find the key!Please check the name again!");
-                return;
+                return false;
             }
-
+            if (!CheckKeyCanBeUse(_keyCode))
+            {
+                Debug.Log($"{_keyCode}已被使用");
+                return false;
+            }
+            AddUsedKey(_name, _keyCode);
             valueKey.SetKey(_keyCode);
+            return true;
         }
         /// <summary>
         /// 设置方向键位对应的键盘按键
@@ -78,36 +122,58 @@ namespace RPG.Framework.InputSystem
         /// <param name="_name">键位名</param>
         /// <param name="_posKeyCode">正轴</param>
         /// <param name="_negKeyCode">负轴</param>
-        public void SetAxisKey(string _name,KeyCode _posKeyCode,KeyCode _negKeyCode)
+        public bool SetAxisKey(string _name,KeyCode _posKeyCode,KeyCode _negKeyCode)
         {
             AxisKey axisKey = GetAxisKeyObject(_name);
             if(axisKey==null)
             {
                 Debug.LogError("Can not find the key!Please check the name again!");
-                return;
+                return false;
             }
+            if (!CheckKeyCanBeUse(_posKeyCode)&& !CheckKeyCanBeUse(_negKeyCode))
+            {
+                Debug.Log($"{_posKeyCode}或{_negKeyCode}已被使用");
+                return false;
+            }
+            AddUsedKey(_name + InputData.AxisPos, _posKeyCode);
+            AddUsedKey(_name + InputData.AxisNeg, _negKeyCode);
             axisKey.SetKey(_posKeyCode,_negKeyCode);
+            return true;
         }
 
-        public void SetAxisPosKey(string _name,KeyCode _posKeyCode)
+        public bool SetAxisPosKey(string _name,KeyCode _posKeyCode)
         {
             AxisKey axisKey = GetAxisKeyObject(_name);
             if (axisKey == null)
             {
                 Debug.LogError("Can not find the key!Please check the name again!");
-                return;
+                return false;
             }
+            if (!CheckKeyCanBeUse(_posKeyCode))
+            {
+                Debug.Log($"{_posKeyCode}已被使用");
+                return false;
+            }
+            AddUsedKey(_name + InputData.AxisPos, _posKeyCode);
             axisKey.SetPosKey(_posKeyCode);
+            return true;
         }
-        public void SetAxisNegKey(string _name, KeyCode _negKeyCode)
+        public bool SetAxisNegKey(string _name, KeyCode _negKeyCode)
         {
             AxisKey axisKey = GetAxisKeyObject(_name);
             if (axisKey == null)
             {
                 Debug.LogError("Can not find the key!Please check the name again!");
-                return;
+                return false;
             }
+            if (!CheckKeyCanBeUse(_negKeyCode))
+            {
+                Debug.Log($"{_negKeyCode}已被使用");
+                return false;
+            }
+            AddUsedKey(_name + InputData.AxisNeg, _negKeyCode);
             axisKey.SetNegKeey(_negKeyCode);
+            return true;
         }
         /// <summary>
         /// 获取键位按下
@@ -375,16 +441,18 @@ namespace RPG.Framework.InputSystem
             JsonUtility.FromJsonOverwrite(data, inputSettingData);
             foreach (var key in keys)
             {
-                key.keyCode = String2Enum_KeyCoded(inputSettingData.keys.Find(k => k.name == key.name).keyCode);
+                KeyCode keycode = String2Enum_KeyCoded(inputSettingData.keys.Find(k => k.name == key.name).keyCode);
+                SetKey(key.name, keycode);
             }
             foreach (var valueKey in valueKeys)
             {
-                valueKey.keyCode = String2Enum_KeyCoded(inputSettingData.valueKeys.Find(k => k.name == valueKey.name).keyCode);
+                KeyCode keycode = String2Enum_KeyCoded(inputSettingData.valueKeys.Find(k => k.name == valueKey.name).keyCode);
+                SetValueKey(valueKey.name, keycode);
             }
             foreach (var axisKey in axisKeys)
             {
-                axisKey.posKeyCode = String2Enum_KeyCoded(inputSettingData.axisKeys.Find(k => k.name == axisKey.name).posKeyCode);
-                axisKey.negKeyCode = String2Enum_KeyCoded(inputSettingData.axisKeys.Find(k => k.name == axisKey.name).negKeyCode);
+                AxisData axisData = inputSettingData.axisKeys.Find(k => k.name == axisKey.name);
+                SetAxisKey(axisKey.name, String2Enum_KeyCoded(axisData.posKeyCode), String2Enum_KeyCoded(axisData.negKeyCode));
             }
 
         }

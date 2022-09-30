@@ -49,17 +49,17 @@ public class MyTest : MonoBehaviour
 
     private void Response1(object[] args)
     {
-        foreach (var item in args)
-        {
-            Debug.Log(item);
-        }
+        //foreach (var item in args)
+        //{
+        //    Debug.Log(item);
+        //}
     }
 
     private void Response2(object[] args)
     {
-        foreach (var item in args)
-        {
-            Debug.Log(item);
-        }
+        //foreach (var item in args)
+        //{
+        //    Debug.Log(item);
+        //}
     }
 }

@@ -11,8 +11,9 @@ namespace RPG.Framework.InputSystem
         private static string m_CustomDataSavePath = "/Resources/UserData/CustomInputData.json";
         private static InputData m_InputData;
         private static bool m_ActiveInput = false;
-        private static Action<KeyCode> SetKeyHandle;
+        private static Func<KeyCode,bool> SetKeyHandle;
         private static Action<KeyCode> DisplayKeyHandle;
+        private static Action RestorKeyHandle;
 
         public InputManager(InputData _inputData)
         {
@@ -28,15 +29,24 @@ namespace RPG.Framework.InputSystem
             {
                 foreach (KeyCode key in Enum.GetValues(typeof(KeyCode)))
                 {
-                    if(Input.GetKeyDown(key))
+                    if (Input.GetKeyDown(key))
                     {
-                        if(SetKeyHandle!=null)
+                        if (SetKeyHandle != null)
                         {
-                            SetKeyHandle(key);
-                        }
-                        if(DisplayKeyHandle!=null)
-                        {
-                            DisplayKeyHandle(key);
+                            if (DisplayKeyHandle != null)
+                            {
+                                if (SetKeyHandle(key))
+                                {
+                                    DisplayKeyHandle(key);
+                                }
+                                else
+                                {
+                                    if (RestorKeyHandle != null)
+                                    {
+                                        RestorKeyHandle();
+                                    }
+                                }
+                            }
                         }
                         m_ActiveInput = false;
                         SetKeyHandle = null;
@@ -95,18 +105,18 @@ namespace RPG.Framework.InputSystem
         /// </summary>
         /// <param name="_name"></param>
         /// <param name="_keyCode"></param>
-        public static void SetKey(string _name,KeyCode _keyCode)
+        public static bool SetKey(string _name,KeyCode _keyCode)
         {
-            m_InputData.SetKey(_name,_keyCode);
+            return m_InputData.SetKey(_name,_keyCode);
         }
         /// <summary>
         /// 设置数字键对应的键盘按键
         /// </summary>
         /// <param name="_name"></param>
         /// <param name="_keyCode"></param>
-        public static void SetValueKey(string _name,KeyCode _keyCode)
+        public static bool SetValueKey(string _name,KeyCode _keyCode)
         {
-            m_InputData.SetValueKey(_name,_keyCode);
+            return m_InputData.SetValueKey(_name,_keyCode);
         }
         /// <summary>
         /// 设置方向键对应的键盘按键
@@ -114,38 +124,39 @@ namespace RPG.Framework.InputSystem
         /// <param name="_name"></param>
         /// <param name="_posKeyCode"></param>
         /// <param name="_negKeyCode"></param>
-        public static void SetAxisKey(string _name,KeyCode _posKeyCode,KeyCode _negKeyCode)
+        public static bool SetAxisKey(string _name,KeyCode _posKeyCode,KeyCode _negKeyCode)
         {
-            m_InputData.SetAxisKey(_name, _posKeyCode, _negKeyCode);
+            return m_InputData.SetAxisKey(_name, _posKeyCode, _negKeyCode);
         }
         /// <summary>
         /// 设置方向键的正向键盘按键
         /// </summary>
         /// <param name="_name"></param>
         /// <param name="_posKeyCode"></param>
-        public static void SetAxisPosKey(string _name,KeyCode _posKeyCode)
+        public static bool SetAxisPosKey(string _name,KeyCode _posKeyCode)
         {
-            m_InputData.SetAxisPosKey(_name, _posKeyCode);
+            return m_InputData.SetAxisPosKey(_name, _posKeyCode);
         }
         /// <summary>
         /// 设置方向键的负向键盘按键
         /// </summary>
         /// <param name="_name"></param>
         /// <param name="_negKeyCode"></param>
-        public static void SetAxisNegKey(string _name,KeyCode _negKeyCode)
+        public static bool SetAxisNegKey(string _name,KeyCode _negKeyCode)
         {
-            m_InputData.SetAxisNegKey(_name,_negKeyCode);
+            return m_InputData.SetAxisNegKey(_name,_negKeyCode);
         }
         /// <summary>
         /// 开始设置键位
         /// </summary>
         /// <param name="setKey"></param>
         /// <param name="displayKey"></param>
-        public static void StartSetKey(Action<KeyCode> setKey, Action<KeyCode> displayKey)
+        public static void StartSetKey(Func<KeyCode,bool> setKey, Action<KeyCode> displayKey,Action restorKey)
         {
             m_ActiveInput = true;
             SetKeyHandle = setKey;
             DisplayKeyHandle = displayKey;
+            RestorKeyHandle = restorKey;
         }
         /// <summary>
         /// 保存默认按键设置
